@@ -1,0 +1,13 @@
+# 密钥和登录态，绝不进仓库
+config.json
+auth_state.json
+*.muse-github-snapshot-sync.json
+# 生成数据（模拟/真实），只留 schema 和说明
+output/*.sqlite
+output/*.xlsx
+output/*.csv
+output/json/
+output/last_sync.json
+output/daily_report_*.md
+__pycache__/
+*.pyc

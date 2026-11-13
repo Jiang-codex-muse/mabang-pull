@@ -1,0 +1,1 @@
+{"_api":"order-get-order-list-new, sys-get-shop-list, stock-do-search-sku-list-new","_host":"https://api.mabang.com","_sign_method_说明":"可选 hmac_json / hmac_sorted / hmac_timestamp, 先用 python mabang_pull.py --test-sign 对照官方文档示例选对的","appKey":"填你的马帮开放平台 AppKey","appSecret":"填你的马帮开放平台 AppSecret, 别发到群里, 别提交到仓库","sign_method":"hmac_json"}
