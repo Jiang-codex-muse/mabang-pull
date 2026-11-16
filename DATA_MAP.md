@@ -1,6 +1,11 @@
 # 工作台 × 马帮 数据对照表（v0.2）
 
 > 依据：`WORKBENCH_DATA_REQUIREMENTS.md`（仓库 d3a1598 只读审计）。
+> **2026-11-16 更新**：马帮亚马逊专业版 6 个页面已实页核对，固定路径、URL、
+> 筛选、列名见 `PAGE_PATHS.md`。实测店铺名只有 BIGO-sa、STARRY BOX-ae、
+> bilabuy-ae，**没有 ONE-XY**；bilabuy-ae 是否 = ONE-XY 待江确认，
+> 下文凡写 ONE-XY 处先按此疑问处理。费用管理页当前 0 条数据，
+> 按 SKU 拆费用无法验证。
 > 店铺写死 3 家：`one` ONE-XY（AE/AED/Asia/Dubai）、`home` STARRY BOX（AE/AED/Asia/Dubai）、
 > `sa` BIGO-SA（SA/SAR/Asia/Riyadh）。币种必须与店铺一致，否则工作台导入报错。
 > 商品身份钥匙：`sku`（亚马逊 SKU）+ `asin`，马帮 SKU 是 `localSku`，三者必须先对齐，

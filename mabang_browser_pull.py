@@ -17,9 +17,9 @@
 多页面配置 (v0.2 新增, 关键):
 马帮数据分布在很多页面, 不止订单列表一个地方, 所以 PAGES 是字典,
 一页一个配置, 每页写明: 顶部导航、标签页、筛选、下载按钮文字。
-下面只有 listing 那页是按你发的截图核对过的, 其他页是占位,
-跑之前必须按真实页面核对选择器, 核对方法在每页的 "verify" 里写了。
-不要猜选择器, 猜了也跑不通, 发截图过来改最快。
+2026-11-16 已用江本地 Edge 进亚马逊专业版逐页实测核对 (见 PAGE_PATHS.md),
+6 页路径/URL/筛选/列名都已写实; 但 CSS 选择器还没逐个抄准,
+自动点下载前仍要按真实页面把 selectors 改对一次。
 
 注意 - 直说:
 1. 这也是 v0.2, 没用你的真实账号跑通过。马帮 ERP 网页的按钮文字 / 链接
@@ -51,18 +51,29 @@ import time
 
 LOGIN_URL = "https://www.mabangerp.com"
 
+# 入口（2026-11-16 已核实）：官网首页顶部导航“ERP”下拉 -> “亚马逊专业版”，
+# 江本地浏览器里有登录态时直接进工作台，不出现登录页。
+ENTRY = {"nav": ["ERP"], "tab": "亚马逊专业版",
+         "dashboard": "https://www.mabangerp.com/amazon/dashboard?source=erp&lang=cn"}
+
+# 店铺口径（2026-11-16 实测）：马帮里只有 BIGO-sa、STARRY BOX-ae、bilabuy-ae，
+# 没有 ONE-XY；bilabuy-ae 是否 = 工作台 ONE-XY 待江确认，确认前不做等同处理。
+
 # ---- 多页面配置：按你实际页面核对这里 ----
 # verify: 每个页面都写了“按什么核对”, 核对完把 verified 改成 True。
 PAGES = {
     "listing": {
         "name": "在售 Listing",
-        "nav": ["商品"],
-        "tab": "在售Listing",
+        "nav": ["销售", "listing管理"],
+        "tab": "在线Listing（新）",
+        "url": "https://www.mabangerp.com/amazon/sale/listing",
         "verified": True,
-        "verify": "已按江 2026-11-13 发的截图核对：顶部导航 商品，标签 在售Listing，"
-                  "筛选有 全部国家/全部店铺/在售/上架时间（开始日期-结束日期），"
-                  "右上角有“下载”按钮和“列配置”，共 529 条、200 条/页。"
-                  "列：MSKU/FNSKU、ASIN、品名/SKU、日均销量、上架时间、库龄。",
+        "verify": "2026-11-16 已在江本地 Edge 实页核对（取代 2026-11-13 截图口径）："
+                  "路径 销售>listing管理>在线Listing（新），筛选有 国家/店铺"
+                  "（BIGO-sa/STARRY BOX-ae/bilabuy-ae）/listing状态/上架时间，店铺筛选可生效；"
+                  "无文字导出按钮，有导入下拉、列配置、右上角下载图标（未点验）。"
+                  "共 529 条。列：MSKU/FNSKU、ASIN、品名/SKU、售价、销量7/14/30/90天、"
+                  "FBA可售、库龄分段、日均销量、上架时间。详见 PAGE_PATHS.md。",
         "filters": {"country": "全部国家", "shop": "全部店铺", "status": "在售", "date_field": "上架时间"},
         "download_button": "text=下载",
         "selectors": {
@@ -79,13 +90,17 @@ PAGES = {
     },
     "orders": {
         "name": "FBA订单 / 订单列表",
-        "nav": ["销售"],
+        "nav": ["销售", "订单管理"],
         "tab": "FBA订单",
-        "verified": False,
-        "verify": "未核对：需要江发 FBA订单页截图，确认筛选（店铺/日期/状态）、"
-                  "导出/下载按钮文字和位置、列名（订单号、下单时间、SKU、件数、金额、状态）后再改。",
-        "filters": {"shop": "全部店铺", "date_field": "下单时间"},
-        "download_button": "text=导出",
+        "url": "https://www.mabangerp.com/amazon/sale/erp/FBADingDan",
+        "verified": True,
+        "verify": "2026-11-16 已实页核对：路径 销售>订单管理>FBA订单，有“导出订单”按钮；"
+                  "筛选 店铺/时间（付款时间或发货时间，默认付款时间30天）/状态/测评订单；"
+                  "全部店铺30天439条。列：商品信息、店铺/交易号、订单金额/订单利润、时间。"
+                  "注意：无单独下单时间列；单店铺筛选曾出现选完搜出0条的异常，"
+                  "复核时注意筛选生效方式。详见 PAGE_PATHS.md。",
+        "filters": {"shop": "全部店铺", "date_field": "付款时间"},
+        "download_button": "text=导出订单",
         "selectors": {
             "nav_sales": "text=销售",
             "tab_fba_orders": "text=FBA订单",
@@ -95,14 +110,18 @@ PAGES = {
         "output_subdir": "orders",
     },
     "inventory": {
-        "name": "库存 / FBA 库存",
-        "nav": ["仓储"],
-        "tab": "FBA库存",
-        "verified": False,
-        "verify": "未核对：需要江发库存页截图，确认筛选（店铺/仓库/快照日期）、"
-                  "下载按钮、列名（SKU、FNSKU、ASIN、FBA可售、在途、在库）后再改。",
-        "filters": {"shop": "全部店铺", "date_field": "快照日期"},
-        "download_button": "text=下载",
+        "name": "FBA库存（FBA库龄页）",
+        "nav": ["FBA", "数据统计"],
+        "tab": "FBA库龄",
+        "url": "https://www.mabangerp.com/amazon/FBA/erp/fbaKuCun",
+        "verified": True,
+        "verify": "2026-11-16 已实页核对：真正的 FBA 库存页是 FBA库龄，有“导出EXCEL”；"
+                  "列有 ASIN/FNSKU/MSKU/店铺/仓库/报告日期/可售/不可售/待调仓/待发货/"
+                  "计划入库/在途/入库中/库龄段。共 35,557 条是约150个卖家账号混排，"
+                  "且单选店铺筛选曾未生效，复核时优先解决按店铺筛。本地仓对照页是"
+                  "商品>商品管理>库存查询（无店铺筛选、无FNSKU）。详见 PAGE_PATHS.md。",
+        "filters": {"shop": "全部店铺", "date_field": "报告日期"},
+        "download_button": "text=导出EXCEL",
         "selectors": {
             "nav_warehouse": "text=仓储",
             "tab_inventory": "text=FBA库存",
@@ -113,12 +132,15 @@ PAGES = {
     },
     "fba_shipments": {
         "name": "FBA 货件",
-        "nav": ["仓储", "物流"],
-        "tab": "FBA发货",
-        "verified": False,
-        "verify": "未核对：需要江发马帮 FBA 发货页截图，确认字段（FBA货件号、目的仓、"
-                  "发货量、入库量、状态、海运单号）和下载按钮后再改。这是补工作台"
-                  "FBA 货件信息的关键一页。",
+        "nav": ["FBA", "补货管理（新）"],
+        "tab": "FBA货件",
+        "url": "https://www.mabangerp.com/amazon/FBA/fbaCargo",
+        "verified": True,
+        "verify": "2026-11-16 已实页核对：路径 FBA>补货管理（新）>FBA货件，共 33 条；"
+                  "每票表头有 FBA货件编号/Reference ID/物流中心编码/创建时间/发货时间/状态，"
+                  "行列有 申报量/已发货/签收量/申发差异/收发差异。无文字导出按钮"
+                  "（右上角下载图标未点验）；无“收货量”列（是签收量）；"
+                  "单选店铺筛选曾未生效，复核时注意。详见 PAGE_PATHS.md。",
         "filters": {"shop": "全部店铺"},
         "download_button": "text=下载",
         "selectors": {
@@ -128,6 +150,44 @@ PAGES = {
             "export": "text=导出",
         },
         "output_subdir": "fba_shipments",
+    },
+    "purchase": {
+        "name": "采购管理",
+        "nav": ["采购"],
+        "tab": "采购管理",
+        "url": "https://www.mabangerp.com/amazon/purchase/erp/caiGouGuanLi",
+        "verified": True,
+        "verify": "2026-11-16 已实页核对：路径 采购>采购管理，采购中 4,680 条；"
+                  "导出在“导入/出相关”菜单（导出勾选采购单/导出搜索的全部记录）；"
+                  "行内有 SKU、数量/单价、入库明细、预计到货时间。"
+                  "2024-06-01 之前的采购单已归档，导出要联系客服。详见 PAGE_PATHS.md。",
+        "filters": {"tab_status": "采购中"},
+        "download_button": "text=导入/出相关",
+        "selectors": {
+            "nav_purchase": "text=采购",
+            "tab_purchase": "text=采购管理",
+            "export_menu": "text=导入/出相关",
+        },
+        "output_subdir": "purchase",
+    },
+    "finance_cost": {
+        "name": "财务费用管理",
+        "nav": ["财务", "报表管理"],
+        "tab": "费用管理",
+        "url": "https://www.mabangerp.com/amazon/finance/costWork",
+        "verified": True,
+        "verify": "2026-11-16 已实页核对：路径 财务>报表管理>费用管理；商品费用标签"
+                  "列有 MSKU/ASIN/费用维度/分摊规则，结构上支持按商品拆分；但店铺费用、"
+                  "商品费用当前都是 0 条、费用类型下拉为空，无法验证实际分摊结果。"
+                  "员工费用标签未看。详见 PAGE_PATHS.md。",
+        "filters": {"tab_cost": "商品费用"},
+        "download_button": "text=下载",
+        "selectors": {
+            "nav_finance": "text=财务",
+            "tab_cost": "text=费用管理",
+            "download": "text=下载",
+        },
+        "output_subdir": "finance_cost",
     },
 }
 
