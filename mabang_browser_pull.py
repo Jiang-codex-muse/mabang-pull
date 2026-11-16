@@ -56,8 +56,8 @@ LOGIN_URL = "https://www.mabangerp.com"
 ENTRY = {"nav": ["ERP"], "tab": "亚马逊专业版",
          "dashboard": "https://www.mabangerp.com/amazon/dashboard?source=erp&lang=cn"}
 
-# 店铺口径（2026-11-16 实测）：马帮里只有 BIGO-sa、STARRY BOX-ae、bilabuy-ae，
-# 没有 ONE-XY；bilabuy-ae 是否 = 工作台 ONE-XY 待江确认，确认前不做等同处理。
+# 店铺口径（江 2026-11-16 已确认）：马帮 bilabuy-ae = 工作台 ONE-XY，
+# STARRY BOX-ae = STARRY BOX，BIGO-sa = BIGO-SA；拉数时按马帮名筛选、入库时换工作台名。
 
 # ---- 多页面配置：按你实际页面核对这里 ----
 # verify: 每个页面都写了“按什么核对”, 核对完把 verified 改成 True。
