@@ -96,9 +96,10 @@ PAGES = {
         "verified": True,
         "verify": "2026-11-16 已实页核对：路径 销售>订单管理>FBA订单，有“导出订单”按钮；"
                   "筛选 店铺/时间（付款时间或发货时间，默认付款时间30天）/状态/测评订单；"
-                  "全部店铺30天439条。列：商品信息、店铺/交易号、订单金额/订单利润、时间。"
-                  "注意：无单独下单时间列；单店铺筛选曾出现选完搜出0条的异常，"
-                  "复核时注意筛选生效方式。详见 PAGE_PATHS.md。",
+                  "全部店铺30天440条。列：商品信息、店铺/交易号、订单金额/订单利润、时间。"
+                  "注意：无单独下单时间列。⚠️复核发现三家店单选全是 0 条、440 条首屏"
+                  "全是别的店名，疑似这三家店订单没同步进此页，待查店铺授权/拉取订单设置，"
+                  "定性前订单源不算通。详见 PAGE_PATHS.md §1。",
         "filters": {"shop": "全部店铺", "date_field": "付款时间"},
         "download_button": "text=导出订单",
         "selectors": {
@@ -110,18 +111,18 @@ PAGES = {
         "output_subdir": "orders",
     },
     "inventory": {
-        "name": "FBA库存（FBA库龄页）",
-        "nav": ["FBA", "数据统计"],
-        "tab": "FBA库龄",
-        "url": "https://www.mabangerp.com/amazon/FBA/erp/fbaKuCun",
+        "name": "库存快照（用在线Listing页）",
+        "nav": ["销售", "listing管理"],
+        "tab": "在线Listing（新）",
+        "url": "https://www.mabangerp.com/amazon/sale/listing",
         "verified": True,
-        "verify": "2026-11-16 已实页核对：真正的 FBA 库存页是 FBA库龄，有“导出EXCEL”；"
-                  "列有 ASIN/FNSKU/MSKU/店铺/仓库/报告日期/可售/不可售/待调仓/待发货/"
-                  "计划入库/在途/入库中/库龄段。共 35,557 条是约150个卖家账号混排，"
-                  "且单选店铺筛选曾未生效，复核时优先解决按店铺筛。本地仓对照页是"
-                  "商品>商品管理>库存查询（无店铺筛选、无FNSKU）。详见 PAGE_PATHS.md。",
-        "filters": {"shop": "全部店铺", "date_field": "报告日期"},
-        "download_button": "text=导出EXCEL",
+        "verify": "江 2026-11-16 定：库存快照就看在线Listing（新）页每条 SKU 的"
+                  "FBA可售/现货/库龄分段，和 listing_daily 同一次拉取完成，不再单设库存页。"
+                  "原 FBA库龄页（/amazon/FBA/erp/fbaKuCun）弃用：35,557 条混约150个账号、"
+                  "首屏全 0、单店筛选不生效。本地仓对照页 库存查询 无店铺筛选、无FNSKU，"
+                  "只作对照。详见 PAGE_PATHS.md §3。",
+        "filters": {"shop": "全部店铺", "date_field": "快照日期"},
+        "download_button": "text=下载",
         "selectors": {
             "nav_warehouse": "text=仓储",
             "tab_inventory": "text=FBA库存",
@@ -131,16 +132,17 @@ PAGES = {
         "output_subdir": "inventory",
     },
     "fba_shipments": {
-        "name": "FBA 货件",
-        "nav": ["FBA", "补货管理（新）"],
-        "tab": "FBA货件",
-        "url": "https://www.mabangerp.com/amazon/FBA/fbaCargo",
+        "name": "FBA 货件（货件看板）",
+        "nav": ["FBA", "数据统计"],
+        "tab": "FBA货件看板",
+        "url": "https://www.mabangerp.com/amazon/FBA/FbaBoard",
         "verified": True,
-        "verify": "2026-11-16 已实页核对：路径 FBA>补货管理（新）>FBA货件，共 33 条；"
-                  "每票表头有 FBA货件编号/Reference ID/物流中心编码/创建时间/发货时间/状态，"
-                  "行列有 申报量/已发货/签收量/申发差异/收发差异。无文字导出按钮"
-                  "（右上角下载图标未点验）；无“收货量”列（是签收量）；"
-                  "单选店铺筛选曾未生效，复核时注意。详见 PAGE_PATHS.md。",
+        "verify": "江 2026-11-16 纠正：货件数据源是 FBA货件看板，不是补货管理里的"
+                  "FBA货件页（fbaCargo 33 条、筛选不生效，弃用）。看板 2024-01-01 起"
+                  "共 319 条，单选 BIGO-sa 109 条，筛选生效（勾店铺→确定→自动刷新）。"
+                  "列有 货件单号/店铺/物流中心编码/申报量/发货量/签收量/创建时间/"
+                  "发货时间/预计到货时间/货件状态/运输总时效，有下载按钮。"
+                  "详见 PAGE_PATHS.md §4。",
         "filters": {"shop": "全部店铺"},
         "download_button": "text=下载",
         "selectors": {
